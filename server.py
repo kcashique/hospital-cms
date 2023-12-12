@@ -1,10 +1,32 @@
-def app(environ, start_response):
-    data= b"hello, world!\n"
-    status = "200 OK"
-    response_header = [
-        ('content-type', 'text/plain'),
-        ('content-length',str(len(data)))
-    ]
-    start_response(status, response_header)
-    return iter([data])
+from werkzeug import Response, Request
+from werkzeug.routing import Rule, Map
+from werkzeug.exceptions import NotFound
+
+from modules.routes import index
+
+
+
+class HospitalSystem():
+    def __init__(self):
+        self.url_map=Map([
+            Rule('/', endpoint='index')
+        ])
     
+    def dispatch_request(self, request):
+        adapter = self.url_map.bind_to_environ(request.environ)
+        try:
+            endpoint, values = adapter.match()
+            return getattr(self, f'on_{endpoint}')(request, **values)
+        except NotFound:
+            return Response('Not Found', status=404)
+    
+    def on_index(self, request):
+        return index(request)
+
+
+    
+def app(environ, start_response):
+    request = Request(environ)
+    hospital_app = HospitalSystem()
+    response=hospital_app.dispatch_request(request)
+    return response(environ, start_response)
