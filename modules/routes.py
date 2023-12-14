@@ -2,6 +2,8 @@ from werkzeug.wrappers import Response
 
 from jinja2 import Environment, FileSystemLoader
 
+from modules.db_config import db_conn
+
 
 
 #jinja 2 configurations
@@ -26,6 +28,17 @@ def doctors(self):
         {"name": "Fritz", "score": 40},
         {"name": "Sirius", "score": 75},
     ]
+    # Open a cursor to perform database operations
+    cur = db_conn.cursor()
+    doctors_list =[]
+    result =cur.execute("SELECT doctor_name, fee FROM doctor_tbl;")
+    if result is not None:
+        for item in result:
+            doctors_list.append(item)
+    else:
+        print ("check db or db_connection is not configured properly")
+    cur.close()
+    print (doctors_list)
     max_score = 100
     test_name = "Python Challenge"
     context={
