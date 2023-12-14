@@ -6,6 +6,7 @@ from modules.routes import index, doctors
 
 
 
+
 class HospitalSystem():
     def __init__(self):
         self.url_map=Map([

@@ -1,5 +1,7 @@
 from werkzeug.wrappers import Response
+
 from jinja2 import Environment, FileSystemLoader
+
 
 
 #jinja 2 configurations
@@ -31,6 +33,5 @@ def doctors(self):
         "test_name":test_name,
         "max_score":max_score
     }
-
     template = environment.get_template("result.html")
-    return Response(template.render(context))
+    return Response(template.render(context), content_type='text/html')
