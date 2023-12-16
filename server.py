@@ -10,22 +10,24 @@ class HospitalSystem():
     def __init__(self):
         self.url_map=Map([
             Rule('/', endpoint='index'),
-            Rule('/doctors', endpoint='doctors')
+            Rule('/doctors', endpoint='doctors'),
+            Rule('/doctors/<int:id>', endpoint='doctors')
         ])
     
     def dispatch_request(self, request):
         adapter = self.url_map.bind_to_environ(request.environ)
         try:
             endpoint, values = adapter.match()
-            return getattr(self, f'on_{endpoint}')(request, **values)
+            return getattr(self, f'on_{endpoint}')(request, **values)   
         except NotFound:
             return Response('Not Found', status=404)
     
     def on_index(self, request):
         return index(request)
     
-    def on_doctors(self, request):
-        return doctors(request)
+    def on_doctors(self, request, **values):
+        doctor_id=values.get('id')
+        return doctors(request, doctor_id)
 
     
 def application(environ, start_response):

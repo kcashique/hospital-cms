@@ -21,27 +21,30 @@ def index(self):
     return Response(data)
 
 
-def doctors(self):
+def doctors(self, doctor_id):
     # Open a cursor to perform database operations
-    cur = db_conn.cursor()
-    result_list =[]
-    cur.execute("SELECT * FROM doctor_tbl;") # the excution qurry
-    result = cur.fetchall() #fetch all detials and add to result
-    if result is not None:
-        for item in result:
-            result_list.append(item)
-    else:
-        print ("check db_connection is configured properly")
-    cur.close()
-    # doctors_list = [{"doctor_name":name, "fee":value} for name, value in result_list]
-    doctors_list = [
-        Doctor(doctor_id=row[0], doctor_name=row[1], speciality=row[2], fee=row[3], scheduled_time=row[4], entry_date=row[5])
-        for row in result
-    ]
-    print (doctors_list)
-    # showing attribute error
-    response_data = "\n".join([f"{doctor.doctor_name}: {doctor.fee}" for doctor in doctors_list])
-    print (response_data)
+    if doctor_id is None:
+        cur = db_conn.cursor()
+        cur.execute("SELECT doctor_id, doctor_name, fee  FROM doctor_tbl;") # the excution qurry
+        result = cur.fetchall() #fetch all detials and add to result
+        if result is not None:
+            pass
+        else:
+            print ("check db_connection is configured properly or db is none")
+        cur.close()
+        doctors_list = [{"doctor_id":row[0],  "doctor_name":row[1], "fee":row[2]} for row in result]
+        print (doctor_id)
+    if doctor_id is not None:
+        cur = db_conn.cursor()
+        cur.execute("SELECT doctor_id, doctor_name, fee  FROM doctor_tbl WHERE doctor_id=(%s);",(str(doctor_id))) # the excution qurry
+        result = cur.fetchall() #fetch all detials and add to result
+        if result is not None:
+            pass
+        else:
+            print ("check db_connection is configured properly or db is none")
+        cur.close()
+        doctors_list = [{"doctor_id":row[0],  "doctor_name":row[1], "fee":row[2]} for row in result]
+        print(doctors_list)
 
     test_name = "Hospitel Management System"
     context={
@@ -49,4 +52,4 @@ def doctors(self):
         "doctors_list":doctors_list
     }
     template = environment.get_template("result.html")
-    return Response(template.render(context), content_type='text/html')
+    return Response(template.render(context), content_type='text/html')                 
