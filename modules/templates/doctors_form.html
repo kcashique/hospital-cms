@@ -10,6 +10,12 @@
   <body>
     <div class="container mt-5">
       <h1 class="mb-4">Doctors Details Form</h1>
+      <!-- Success Message -->
+      {% if resp %}
+      <div class="alert alert-success" role="alert">
+        {{ resp }}
+      </div>
+      {% endif %}
 
       <form action="/submit" method="post">
         <div class="form-group">

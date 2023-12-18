@@ -65,3 +65,22 @@ def doctors(self, doctor_id):
         print (f"Data_Error :{err}")
         resp= f"Data_Error :{err}"
         return Response(resp, content_type='text/html', status=404)
+
+
+def doctor_form(request):
+    if request.method == 'POST':
+        doctor_name= request.form.get('doctor_name')
+        speciality = request.form.get('speciality')
+        fee = request.form.get('fee')
+        scheduled_time =request.form.get('scheduled_time')
+
+        print(f'{doctor_name}, {speciality}, {fee}, {scheduled_time}')
+        resp="Form sumbited succes"
+        context={
+            "resp":resp,
+        }
+        template = environment.get_template("doctors_form.html")
+        return Response(template.render(context), content_type='text/html')
+    else:
+        template = environment.get_template("doctors_form.html")
+        return Response(template.render(), content_type='text/html')

@@ -2,7 +2,7 @@ from werkzeug import Response, Request
 from werkzeug.routing import Rule, Map
 from werkzeug.exceptions import NotFound
 
-from modules.routes import index, doctors
+from modules.routes import index, doctors, doctor_form
 
 
 
@@ -11,7 +11,8 @@ class HospitalSystem():
         self.url_map=Map([
             Rule('/', endpoint='index'),
             Rule('/doctors', endpoint='doctors'),
-            Rule('/doctors/<int:id>', endpoint='doctors')
+            Rule('/doctors/<int:id>', endpoint='doctors'),
+            Rule('/submit', endpoint='doctor_form')
         ])
     
     def dispatch_request(self, request):
@@ -28,6 +29,9 @@ class HospitalSystem():
     def on_doctors(self, request, **values):
         doctor_id=values.get('id')
         return doctors(request, doctor_id)
+
+    def on_doctor_form(self, request):
+        return doctor_form(request)
 
     
 def application(environ, start_response):
