@@ -9,30 +9,20 @@ from modules.routes import index, doctors, doctor_form
 class HospitalSystem():
     def __init__(self):
         self.url_map=Map([
-            Rule('/', endpoint='index'),
+            Rule('/', endpoint=index),
             Rule('/doctors', endpoint='doctors'),
             Rule('/doctors/<int:id>', endpoint='doctors'),
-            Rule('/submit', endpoint='doctor_form')
+            Rule('/create-doctor', endpoint='doctor_form')
         ])
     
     def dispatch_request(self, request):
         adapter = self.url_map.bind_to_environ(request.environ)
         try:
             endpoint, values = adapter.match()
-            return getattr(self, f'on_{endpoint}')(request, **values)   
+            # return getattr(self, f'{endpoint}')(request, **values)
+            return endpoint(self, request, **values)
         except NotFound:
             return Response('Not Found', status=404)
-    
-    def on_index(self, request):
-        return index(request)
-    
-    def on_doctors(self, request, **values):
-        doctor_id=values.get('id')
-        return doctors(request, doctor_id)
-
-    def on_doctor_form(self, request):
-        return doctor_form(request)
-
     
 def application(environ, start_response):
     request = Request(environ)
