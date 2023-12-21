@@ -14,8 +14,8 @@ class HospitalSystem():
             Rule('/doctors/<int:id>', endpoint=doctors),
             Rule('/create-doctor', endpoint=doctor_form)
         ])
-        self.session = {}
-    
+
+        
     def dispatch_request(self, request):
         adapter = self.url_map.bind_to_environ(request.environ)
         try:
@@ -23,7 +23,8 @@ class HospitalSystem():
             return endpoint(self, request, **values)
         except NotFound:
             return Response('Not Found', status=404)
-    
+
+
 def application(environ, start_response):
     request = Request(environ)
     hospital_app = HospitalSystem()

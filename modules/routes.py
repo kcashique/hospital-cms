@@ -4,6 +4,8 @@ from werkzeug.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
+from http.cookies import SimpleCookie
+
 from jinja2 import Environment, FileSystemLoader
 
 from modules.db_config import db_conn
@@ -21,6 +23,14 @@ environment = Environment(
 
 def index(self, request):
     data = "Hello World!"
+    # token fetching from browser - code succes
+    cookie = SimpleCookie(request.environ.get('HTTP_COOKIE'))
+    token = cookie.get('csrftoken').value 
+    print (token) 
+    # token add to db for store for validating purpose - impliment
+    
+    # make these functions as a decereator/functioon and then u can call this all endpoint
+
     return Response(data)
 
 
