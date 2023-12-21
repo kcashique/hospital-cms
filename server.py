@@ -14,6 +14,7 @@ class HospitalSystem():
             Rule('/doctors/<int:id>', endpoint=doctors),
             Rule('/create-doctor', endpoint=doctor_form)
         ])
+        self.session = {}
     
     def dispatch_request(self, request):
         adapter = self.url_map.bind_to_environ(request.environ)

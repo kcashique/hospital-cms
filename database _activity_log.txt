@@ -1,0 +1,19 @@
+#create a table for user with
+user_id - primary key -auto incriment
+username - string
+password - string
+email - string
+mobile_no - int
+entry_date - timestamp
+
+query="
+    CREATE TABLE user_tbl (
+        user_id  serial pk,
+        user_name varchar(255),
+        password varchar(255),
+        email varchar(255),
+        mobile_no bigint()
+        entry_date timestamp
+    );
+    "
+    database created pending
