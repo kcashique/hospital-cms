@@ -80,8 +80,7 @@ def doctor_form(self, request):
             speciality = request.form.get('speciality')
             fee = request.form.get('fee')
             scheduled_time =request.form.get('scheduled_time')
-
-            print(f'{doctor_name}, {speciality}, {fee}, {scheduled_time}')
+            # db quary
             cur =db_conn.cursor()
             cur.execute("INSERT INTO doctor_tbl (doctor_name, speciality, fee, scheduled_time) VALUES (%s, %s, %s, %s)", (doctor_name, speciality, fee, scheduled_time))
             db_conn.commit()
@@ -106,40 +105,31 @@ def doctor_form(self, request):
 def login(self, request):
     if request.method == "POST":
         username = request.form.get('username')
-        password = request.form.get('password')
-            # token fetching from browser - code succes
-        
-    # token add to db for store for validating purpose - impliment
-    
-    # make these functions as a decereator/functiom and then u can call this all endpoint
+        password = request.form.get('password')  
+        # built in function for fetch cookie      
         cookie = SimpleCookie(request.environ.get('HTTP_COOKIE'))
         browser_token = cookie.get('csrftoken').value 
-        hashed_pass = generate_password_hash(password, method='scrypt')
-#         #code for fetching users from db - impliment here  
+        # db quary
         cur = db_conn.cursor()
-        cur.execute("SELECT user_id, user_name, password  FROM user_tbl WHERE user_name=(%s);",(str(username),)) # the excution qurry
+        cur.execute("SELECT user_id, user_name, hashed_password  FROM user_tbl WHERE user_name=(%s);",(str(username),)) # the excution qurry
         result = cur.fetchall() #fetch all detials and add to result
         if result is not None:
             pass
         else:
             print ("invalid user name")
         cur.close()
-        users_list = [{"user_id":row[0],  "user_name":row[1], "password":row[2] } for row in result]
 
-#         #  compleate this with the user present in db and validate
-        if check_password_hash(hashed_pass, users_list[0]['password']):
+        users_list = [{"user_id":row[0],  "user_name":row[1], "hashed_password":row[2] } for row in result]
+        
+        if check_password_hash(users_list[0]['hashed_password'], password):
+            # db quary
             cur =db_conn.cursor()
             cur.execute("UPDATE user_tbl SET db_token = (%s) WHERE user_name = (%s)", (browser_token, users_list[0]['user_name']))
             db_conn.commit()
-            print(browser_token)
             print("user logged succesfully")
 
             return redirect("/")
-
     else:
         template = environment.get_template("login.html")
         return Response(template.render(), content_type='text/html')
-
-
-
-        
+  

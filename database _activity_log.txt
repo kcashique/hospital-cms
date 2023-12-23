@@ -19,3 +19,8 @@ query="
     "
     database created 23/12/23
     
+# added new column for password security
+
+ALTER TABLE user_tbl ADD hashed_password varchar(250) NULL;
+
+created 23/12/23
