@@ -2,7 +2,7 @@ from werkzeug import Response, Request
 from werkzeug.routing import Rule, Map
 from werkzeug.exceptions import NotFound
 
-from modules.routes import index, doctors, doctor_form
+from modules.routes import index, doctors, doctor_form, login
 
 # need to impliment session
 
@@ -12,7 +12,8 @@ class HospitalSystem():
             Rule('/', endpoint=index),
             Rule('/doctors', endpoint=doctors),
             Rule('/doctors/<int:id>', endpoint=doctors),
-            Rule('/create-doctor', endpoint=doctor_form)
+            Rule('/create-doctor', endpoint=doctor_form),
+            Rule('/login', endpoint=login)
         ])
 
         
