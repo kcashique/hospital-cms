@@ -114,7 +114,6 @@ def login(self, request):
     # make these functions as a decereator/functiom and then u can call this all endpoint
         cookie = SimpleCookie(request.environ.get('HTTP_COOKIE'))
         browser_token = cookie.get('csrftoken').value 
-        print (browser_token)
         hashed_pass = generate_password_hash(password, method='scrypt')
 #         #code for fetching users from db - impliment here  
         cur = db_conn.cursor()
@@ -126,16 +125,15 @@ def login(self, request):
             print ("invalid user name")
         cur.close()
         users_list = [{"user_id":row[0],  "user_name":row[1], "password":row[2], "speciality":row[3], "scheduled_time":row[4]} for row in result]
-        db_password = users_list.get('password')
-
+        db_password = users_list['password']
 
 #         #  compleate this with the user present in db and validate
-        if password == check_password_hash(hashed_pass, db_password):
-            # impliment and store the token in user_tbl for furthur setup
-             
-            # store the token value to db
-            session = request.environ['werkzeug.session']
-            session['username']= user['username']
+        if hashed_pass == check_password_hash(hashed_pass, db_password):
+            cur =db_conn.cursor()
+            cur.execute("UPDATE user_tbl SET db_token = (%s) WHERE user_name = (%s)", (browser_token, users_list['user_name']))
+            db_conn.commit()
+            print(browser_token)
+            print("user logged succesfully")
 
             return redirect("/")
 
