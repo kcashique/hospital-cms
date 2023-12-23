@@ -11,9 +11,11 @@ query="
         user_id  serial pk,
         user_name varchar(255),
         password varchar(255),
+        db_token varchar(255),
         email varchar(255),
         mobile_no bigint()
         entry_date timestamp
     );
     "
-    database created pending
+    database created 23/12/23
+    
