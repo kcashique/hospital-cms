@@ -106,9 +106,6 @@ def login(self, request):
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')  
-        # built in function for fetch cookie      
-        cookie = SimpleCookie(request.environ.get('HTTP_COOKIE'))
-        browser_token = cookie.get('csrftoken').value 
         # db quary
         cur = db_conn.cursor()
         cur.execute("SELECT user_id, user_name, hashed_password  FROM user_tbl WHERE user_name=(%s);",(str(username),)) # the excution qurry
@@ -124,7 +121,7 @@ def login(self, request):
         if check_password_hash(users_list[0]['hashed_password'], password):
             # db quary
             cur =db_conn.cursor()
-            cur.execute("UPDATE user_tbl SET db_token = (%s) WHERE user_name = (%s)", (browser_token, users_list[0]['user_name']))
+            cur.execute("UPDATE user_tbl SET db_token = (%s) WHERE user_name = (%s)", (self.browser_token, users_list[0]['user_name']))
             db_conn.commit()
             print("user logged succesfully")
 
